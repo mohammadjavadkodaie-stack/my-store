@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+.DS_Store
+
+# فایل‌های تصویری آپلودشده (در زمان اجرا ساخته می‌شوند)
+/uploads/

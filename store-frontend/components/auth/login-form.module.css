@@ -1,0 +1,200 @@
+/* Login form styles — CSS Module, used by the login page only.
+   Colors come from the site's purple theme tokens in app/globals.css
+   (--primary, --primary-foreground, --foreground, --border, --background). */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ─── Error alert (same role/aria as before, new skin) ─── */
+.alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--foreground);
+}
+
+.alertList {
+  margin: 0;
+  padding-inline-start: 18px;
+  list-style: disc;
+}
+
+/* ─── Floating-label field (source: .field / .field input / .field label) ─── */
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  width: 100%;
+  padding: 20px 14px 6px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--background) 65%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+
+.input::placeholder {
+  color: transparent;
+}
+
+.input:hover {
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* Site focus ring, adapted to the input border. */
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--background);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.label {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  pointer-events: none;
+  transition: top 0.18s, font-size 0.18s, color 0.18s, transform 0.18s;
+}
+
+.input:not(:placeholder-shown) ~ .label,
+.input:focus ~ .label {
+  top: 9px;
+  transform: translateY(0);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+}
+
+/* Invalid field: the site marks errors with the neutral foreground, not red. */
+.input[aria-invalid="true"] {
+  border-color: color-mix(in srgb, var(--foreground) 45%, transparent);
+}
+
+.input[aria-invalid="true"] ~ .label {
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+.error {
+  margin-top: 6px;
+  padding-inline-start: 2px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--foreground) 72%, transparent);
+}
+
+/* ─── Phone recap on the code step ─── */
+.phoneRow {
+  font-size: 14px;
+  line-height: 1.9;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
+
+.phoneValue {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* ─── Submit button (source: gradient button + spinner while loading) ─── */
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary-foreground);
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 55%, #fff)
+  );
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--primary) 32%, transparent);
+  transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+
+.submit:hover:not(:disabled) {
+  opacity: 0.94;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.submit:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--primary);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid color-mix(in srgb, var(--primary-foreground) 40%, transparent);
+  border-top-color: var(--primary-foreground);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Shake on a failed client-side validation (source: .card.shake).
+       Two identical animations alternate so the class name changes on every
+       failure — that restarts the animation without remounting the inputs. ─── */
+.shakeA,
+.shakeB {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(7px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shakeA,
+  .shakeB {
+    animation: none;
+  }
+}

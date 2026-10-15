@@ -1,0 +1,187 @@
+/* Login page shell — CSS Module used by the login page only.
+   Every rule hangs off a local class (no global selectors). Colors come from
+   the site's purple theme tokens declared in app/globals.css:
+   --primary, --primary-foreground, --foreground, --border, --background. */
+
+.scene {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 68vh;
+  padding: 40px 16px;
+  overflow: hidden;
+  isolation: isolate;
+  perspective: 1200px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary) 12%, var(--background)) 0%,
+    color-mix(in srgb, var(--primary) 4%, var(--background)) 55%,
+    color-mix(in srgb, var(--primary) 9%, var(--background)) 100%
+  );
+}
+
+/* ─── Decorative blobs (source: three coloured blobs) ─── */
+.blob {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.blob1 {
+  width: 320px;
+  height: 320px;
+  top: -100px;
+  inset-inline-start: -80px;
+  background: var(--primary);
+  animation: blobFloat1 14s ease-in-out infinite;
+}
+
+.blob2 {
+  width: 280px;
+  height: 280px;
+  bottom: -80px;
+  inset-inline-end: -60px;
+  background: color-mix(in srgb, var(--primary) 55%, #fff);
+  animation: blobFloat2 17s ease-in-out infinite;
+}
+
+.blob3 {
+  width: 240px;
+  height: 240px;
+  top: 50%;
+  left: 50%;
+  background: color-mix(in srgb, var(--primary) 28%, #fff);
+  transform: translate(-50%, -50%);
+  animation: blobFloat3 20s ease-in-out infinite;
+}
+
+@keyframes blobFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, 30px) scale(1.08); }
+  66% { transform: translate(-20px, 50px) scale(0.95); }
+}
+
+@keyframes blobFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(-50px, -35px) scale(1.1); }
+  70% { transform: translate(30px, -20px) scale(0.93); }
+}
+
+@keyframes blobFloat3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  30% { transform: translate(-55%, -45%) scale(1.12); }
+  65% { transform: translate(-44%, -54%) scale(0.92); }
+}
+
+/* ─── Glass card ─── */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 22px 24px;
+  border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--background) 78%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 48px color-mix(in srgb, var(--primary) 14%, transparent),
+    inset 0 1px 0 #fff;
+}
+
+/* ─── Logo ─── */
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.logoIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--primary-foreground);
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 55%, #fff)
+  );
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* ─── Headings ─── */
+.heading {
+  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.subheading {
+  margin-bottom: 22px;
+  font-size: 14px;
+  line-height: 1.9;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
+
+/* ─── Register row (source had "or continue with" + social buttons; our flow
+       only links to the register page) ─── */
+.registerRow {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  text-align: center;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
+
+.registerLink {
+  border-radius: 6px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.registerLink:hover {
+  opacity: 0.8;
+}
+
+.registerLink:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--primary);
+}
+
+@media (min-width: 640px) {
+  .scene {
+    min-height: 72vh;
+    padding: 56px 24px;
+  }
+
+  .card {
+    padding: 36px 32px 30px;
+  }
+
+  .heading {
+    font-size: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+}

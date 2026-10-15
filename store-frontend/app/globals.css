@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* Light theme only: a single palette, no prefers-color-scheme switch. */
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --primary: #6d28d9;
+  --primary-foreground: #ffffff;
+  --border: #e5e7eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --font-sans: var(--font-vazirmatn);
+}
+
+html {
+  /* The document is RTL (dir="rtl" on <html>); logical values keep this
+     correct for any future dir switch. */
+  text-align: start;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Register page: the light-red notice slides down when the page appears.
+   CSS-only, so it also runs before/without JavaScript. */
+@keyframes banner-slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.banner-slide-down {
+  animation: banner-slide-down 0.35s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-slide-down {
+    animation: none;
+  }
+}

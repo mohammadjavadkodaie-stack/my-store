@@ -1,0 +1,15 @@
+/* Register-only layout on top of the shared login form skin
+   (components/auth/login-form.module.css): the two name fields sit side by side
+   on wider screens and stack on mobile. Local class names only — no globals. */
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px; /* same rhythm as .form in login-form.module.css */
+}
+
+@media (min-width: 480px) {
+  .nameRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}

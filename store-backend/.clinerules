@@ -1,0 +1,28 @@
+Project: online game/console store. Backend: NestJS + Prisma + PostgreSQL (Docker), port 3000, at C:\Users\MEHR\Desktop\game\store-backend. Frontend: ..\store-frontend (Next.js 16 App Router, Tailwind, port 3001). OS: Windows PowerShell.
+
+SECURITY (mandatory, never weaken, applies to every task):
+- Auth is mobile phone + OTP (no email/password). Phone normalized to ^09\d{9}$. OTP_DEV_BYPASS=true accepts any 6-digit code and is DEV ONLY: never enable in production, never remove the startup guard in main.ts, ADMIN accounts cannot log in via bypass. Never log phone numbers or codes.
+- Role never comes from client input; default USER.
+- Prices/totals computed server-side only. Never trust client values.
+- Every user-owned resource (cart, orders) checked for ownership; admin routes behind a roles guard.
+- DTOs: class-validator, whitelist + forbidNonWhitelisted, MaxLength on all strings.
+- Stock/order changes inside prisma.$transaction.
+- Secrets only in .env (gitignored, keep .env.example updated). CORS only FRONTEND_ORIGIN. Throttle auth endpoints.
+- Generic error messages; no DB/stack details to clients.
+- Payment status is set only server-side after gateway verification.
+- Never read or print .env (contains secrets). Use .env.example for variable names only.
+- Never run destructive commands (prisma migrate reset, docker volume rm, rm -r, git push --force, git reset --hard) without explicit permission.
+- Never install a new package without asking first.
+- Frontend: never store tokens or user secrets in localStorage/sessionStorage; NEXT_PUBLIC_* vars must hold public values only.
+- All routes are protected by global JwtAuthGuard; use @Public() only for intentionally public endpoints. Admin endpoints need @Roles(Role.ADMIN).
+- API is JSON-only; never change data on GET requests.
+
+WORKFLOW:
+- Read only the files the task names or needs. Minimal changes; don't touch unrelated code.
+- After changes run `npm run build` and fix errors.
+- For live tests: write a temp .ps1 script file (never long one-liners), run it, read its log, then delete script, logs and test data (test phones start with 0912000).
+- Commit only if build and tests pass. Never commit .env or dist.
+- Don't change system settings or execution policy. If ambiguous or risky, stop and ask.
+- Final report max 10 lines: files changed, test results, problems. Do not print full file contents unless asked.
+
+API CONVENTIONS: Prisma query builder only, explicit select, never return fields beyond the resource. Prisma errors -> generic messages: P2002 409, P2003 400, P2025 404. Lists paginated (limit max 50); sort via fixed enum->orderBy map, never raw field names. Image strings: max 500 chars, http(s) URL or path starting with '/'. Slugs: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, max 120.

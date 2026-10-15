@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  SHIPPED
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+}
+
+enum Platform {
+  PS5
+  PS4
+  PS3
+  PS2
+  XBOX_SERIES
+  XBOX_ONE
+  SWITCH
+  SWITCH_LITE
+  PC
+  STEAM_DECK
+  PS_VR
+  XBOX
+  ACCESSORY
+  GIFT_CARD
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String    @unique
+  platform  Platform
+  image     String?
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  products  Product[]
+
+  @@index([platform])
+}
+
+model Product {
+  id              Int         @id @default(autoincrement())
+  name            String
+  slug            String      @unique
+  description     String
+  price           Int
+  stock           Int
+  images          String[]
+  brand           String?
+  portsCount      Int?
+  weight          Float?
+  categoryId      Int
+  sku             String?     @unique
+  compareAtPrice  Int?
+  discountPercent Int         @default(0)
+  region          String?
+  genres          String[]
+  specs           Json?
+  isActive        Boolean     @default(true)
+  isFeatured      Boolean     @default(false)
+  soldCount       Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @default(now()) @updatedAt
+  deletedAt       DateTime?
+  category        Category    @relation(fields: [categoryId], references: [id])
+  orderItems      OrderItem[]
+  cartItems       CartItem[]
+
+  @@index([categoryId])
+  @@index([deletedAt])
+  @@index([isActive, createdAt])
+  @@index([price])
+  @@index([soldCount])
+  @@index([discountPercent])
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  phone     String     @unique
+  firstName String
+  lastName  String
+  role      Role       @default(USER)
+  createdAt DateTime   @default(now())
+  orders    Order[]
+  cartItems CartItem[]
+  addresses Address[]
+}
+
+model Address {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  title         String?  @db.VarChar(40)
+  recipientName String   @db.VarChar(80)
+  province      String   @db.VarChar(40)
+  city          String   @db.VarChar(60)
+  addressLine   String   @db.VarChar(300)
+  postalCode    String   @db.VarChar(10)
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  userId        Int
+  status        OrderStatus   @default(PENDING)
+  total         Int           @default(0)
+  paymentStatus PaymentStatus @default(pending)
+  createdAt     DateTime      @default(now())
+  user          User          @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+  quantity    Int
+  price       Int
+  productName String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int     @default(1)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([productId])
+}
+
+model HeroSlide {
+  id          Int      @id @default(autoincrement())
+  imageUrl    String
+  title       String?
+  subtitle    String?
+  buttonLabel String?
+  linkPath    String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// کلید سراسری روشن/خاموش سایت (kill switch) — مدل تک‌رکوردی (id همیشه 1).
+/// پیش‌فرض روشن است؛ تنها شماره‌ی مالک (OWNER_PHONE) اجازه‌ی تغییر آن را دارد.
+model SiteStatus {
+  id        Int      @id @default(1)
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+/// گزارش حسابرسی تغییر وضعیت سایت — تاریخ، IP و وضعیت جدید (بدون توکن/شماره)
+model SiteStatusAudit {
+  id        Int      @id @default(autoincrement())
+  enabled   Boolean
+  ip        String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// تنظیمات نوار تخفیف صفحه‌ی اصلی — مدل تک‌رکوردی (id همیشه 1)
+model DiscountBandSettings {
+  id           Int      @id @default(1)
+  bandEnabled  Boolean  @default(true)
+  timerEnabled Boolean  @default(false)
+  timerEndsAt  DateTime?
+  updatedAt    DateTime @updatedAt
+}
